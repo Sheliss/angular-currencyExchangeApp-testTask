@@ -34,7 +34,16 @@ currencyList: DropdownItem[] = [
   inputValue: number = 1;
   outputValue: number = 0;
 
-  currentRate: number = 0;
+  private _currentRate: number = 0;
+
+  get CurrentRate(): number {
+    return this._currentRate;
+  }
+
+  set CurrentRate(value: number) {
+    this._currentRate = value;
+    this.countOutput();
+  }
 
   constructor(private exchangeRate: ExchangeRateService) { }
 
@@ -43,12 +52,10 @@ currencyList: DropdownItem[] = [
     this.lastOutput = this.outputCurrency;
 
     this.getCurrentRate(this.inputCurrency, this.outputCurrency);
-    this.exchangeRate.getCurrentRate(this.inputCurrency, this.outputCurrency).subscribe((res: Currencies) => (this.outputValue = this.inputValue * this.responseCurrencyCheck(res)!)); //Non-null Assertion because null can't be as result of this function
-    
   }
 
   getCurrentRate(input: string, output: string) {
-    this.exchangeRate.getCurrentRate(input, output).subscribe((res: Currencies) => (this.currentRate = this.responseCurrencyCheck(res)!));
+    this.exchangeRate.getCurrentRate(input, output).subscribe((res: Currencies) => (this.CurrentRate = this.responseCurrencyCheck(res)!));
   }
 
   inputChange() {
@@ -59,7 +66,6 @@ currencyList: DropdownItem[] = [
       this.getCurrentRate(this.inputCurrency, this.outputCurrency);
       return;
     }
-
     this.getCurrentRate(this.inputCurrency, this.outputCurrency);
     this.lastInput = this.inputCurrency;
     this.lastOutput = this.outputCurrency;
@@ -73,7 +79,6 @@ currencyList: DropdownItem[] = [
       this.getCurrentRate(this.inputCurrency, this.outputCurrency);
       return;
     }
-
     this.getCurrentRate(this.inputCurrency, this.outputCurrency);
     this.lastInput = this.inputCurrency;
     this.lastOutput = this.outputCurrency;
@@ -81,12 +86,12 @@ currencyList: DropdownItem[] = [
 
   countOutput() {
     this.getCurrentRate(this.inputCurrency, this.outputCurrency);
-    this.outputValue = this.inputValue * this.currentRate;
+    this.outputValue = parseFloat((this.inputValue * this.CurrentRate).toFixed(2));
   }
 
   countInput() {
     this.getCurrentRate(this.inputCurrency, this.outputCurrency);
-    this.inputValue  = this.outputValue / this.currentRate;
+    this.inputValue  = parseFloat((this.outputValue / this.CurrentRate).toFixed(2));
   }
 
 
