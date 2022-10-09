@@ -9,6 +9,13 @@ import { ExchangeRateService } from 'src/app/services/exchange-rate.service';
 })
 export class ConverterComponent implements OnInit {
 
+////////////////////////////////
+//List of currencies
+//New currencies can be added here
+
+//New currency must be written in the array below, 
+//function in the service, as well as in the interface
+
 currencyList: DropdownItem[] = [
   {
     value: 'uah',
@@ -22,7 +29,9 @@ currencyList: DropdownItem[] = [
     value: 'eur',
     name: 'EUR - Euro'
   }
-];
+  ];
+
+  ////////////////////////////////
 
   inputCurrency: string = this.currencyList[0].value;
   outputCurrency: string = this.currencyList[this.currencyList.length - 1].value;
@@ -55,8 +64,10 @@ currencyList: DropdownItem[] = [
   }
 
   getCurrentRate(input: string, output: string) {
-    this.exchangeRate.getCurrentRate(input, output).subscribe((res: Currencies) => (this.CurrentRate = this.responseCurrencyCheck(res)!));
+    this.exchangeRate.getCurrentRate(input, output).subscribe((res: Currencies) => (this.CurrentRate = this.exchangeRate.responseCurrencyCheck(res)!));
   }
+
+  //Checking currency change and also swap currencies if the same one is selected as in another select
 
   inputChange() {
     if(this.inputCurrency === this.outputCurrency) {
@@ -84,29 +95,38 @@ currencyList: DropdownItem[] = [
     this.lastOutput = this.outputCurrency;
   }
 
+  // Calculation at the rate of selected currencies
+
   countOutput() {
-    this.getCurrentRate(this.inputCurrency, this.outputCurrency);
-    this.outputValue = parseFloat((this.inputValue * this.CurrentRate).toFixed(2));
+    if(this.inputValue < 0) {
+      this.inputValue *= -1;
+    }
+
+    this.outputValue = Number((this.inputValue * this.CurrentRate).toFixed(2));
   }
 
   countInput() {
+    if(this.outputValue < 0) {
+      this.outputValue *= -1;
+    }
+
+    this.inputValue = Number((this.outputValue / this.CurrentRate).toFixed(2));
+  }
+
+  //Exchange currencies and values at the button click
+
+  onSwap() {
+    const tempValue: number = this.inputValue;
+    this.inputCurrency = this.outputCurrency;
+    this.outputCurrency = this.lastInput;
+
     this.getCurrentRate(this.inputCurrency, this.outputCurrency);
-    this.inputValue  = parseFloat((this.outputValue / this.CurrentRate).toFixed(2));
+
+    this.lastInput = this.inputCurrency;
+    this.lastOutput = this.outputCurrency;
+
+    this.inputValue = this.outputValue;
+    this.outputValue = tempValue;
   }
-
-
-  responseCurrencyCheck(res: Currencies) {
-    if('uah' in res) {
-      return res.uah;
-    }
-    if('usd' in res) { 
-      return res.usd
-    }
-    if('eur' in res) { 
-      return res.eur
-    }
-    return -1
-  }
-
 
 }

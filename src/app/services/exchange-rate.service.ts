@@ -15,4 +15,18 @@ export class ExchangeRateService {
     return this.http
       .get<Currencies>(this.apiUri + '/' + input + '/' + output + '.json')
   }
+
+  responseCurrencyCheck(res: Currencies) {
+    if('uah' in res) {
+      return res.uah;
+    }
+    if('usd' in res) { 
+      return res.usd
+    }
+    if('eur' in res) { 
+      return res.eur
+    }
+    return -1
+  }
+  
 }

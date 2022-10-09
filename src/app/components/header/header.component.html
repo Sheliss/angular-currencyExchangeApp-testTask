@@ -1,16 +1,11 @@
 <header>
     <div class="container">
         <div class="header__inner">
-            <h1 class="header__logo">
-                Currency Exchange App
-            </h1>
-            <div class="header__currentRateUAH currentRateUAH">
-                <div class="currentRateUAH__item">
-                    1 USD = {{(rateUSD !== undefined && rateUSD !== 0 ? 1 / rateUSD : 0).toFixed(2)}} UAH
-                </div>
-                <div class="currentRateUAH__item">
-                    1 EUR = {{(rateEUR !== undefined && rateEUR !== 0 ? 1 / rateEUR : 0).toFixed(2)}} UAH
-                </div>
+            <div class="currentRateUAH__item">
+                1 USD = {{ (1 / rateUSD).toFixed(2)}} UAH
+            </div>
+            <div class="currentRateUAH__item">
+                1 EUR = {{ (1 / rateEUR).toFixed(2)}} UAH
             </div>
         </div>
     </div>

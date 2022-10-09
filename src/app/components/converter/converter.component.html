@@ -1,17 +1,25 @@
 <div class="converter">
     <div class="container">
-        <div class="converter__inner inner">
-            <div class="inner__card">
-                <select [(ngModel)]="inputCurrency" (change)="inputChange()">
-                    <option *ngFor="let item of currencyList" [value]="item.value">{{item.name}}</option>
-                </select>
-                <input type="number" [(ngModel)]="inputValue" (input)="countOutput()">
-            </div>
-            <div class="inner__card">
-                <select [(ngModel)]="outputCurrency" (change)="outputChange()">
-                    <option *ngFor="let item of currencyList" [value]="item.value">{{item.name}}</option>
-                </select>
-                <input type="number" [(ngModel)]="outputValue" (input)="countInput()">
+        <div class="converter__inner">
+            <h1>Converter App</h1>
+            <div class="converter__content">
+                <div class="converter__card">
+                    <select [(ngModel)]="inputCurrency" (change)="inputChange()">
+                        <option *ngFor="let item of currencyList" [value]="item.value">{{item.name}}</option>
+                    </select>
+                    <input type="number" [(ngModel)]="inputValue" min="0" (input)="countOutput()">
+                </div>
+                <button class="converter__swap" (click)="onSwap()">
+                    <span class="material-symbols-outlined">
+                        swap_horiz
+                    </span>
+                </button>
+                <div class="converter__card">
+                    <select [(ngModel)]="outputCurrency" (change)="outputChange()">
+                        <option *ngFor="let item of currencyList" [value]="item.value">{{item.name}}</option>
+                    </select>
+                    <input type="number" [(ngModel)]="outputValue" min="0" (input)="countInput()">
+                </div>
             </div>
         </div>
     </div>
