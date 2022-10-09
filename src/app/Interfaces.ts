@@ -4,3 +4,8 @@ export interface Currencies {
     'usd'?: number,
     'eur'?: number,
 }
+
+export interface DropdownItem {
+    value: string,
+    name: string
+}

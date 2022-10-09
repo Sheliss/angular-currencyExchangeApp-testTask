@@ -2,11 +2,17 @@
     <div class="container">
         <div class="converter__inner inner">
             <div class="inner__card">
-                <select [(ngModel)]="currencyList">
-                    
+                <select [(ngModel)]="inputCurrency" (change)="inputChange()">
+                    <option *ngFor="let item of currencyList" [value]="item.value">{{item.name}}</option>
                 </select>
+                <input type="number" [(ngModel)]="inputValue" (input)="countOutput()">
             </div>
-            <div class="inner__card"></div>
+            <div class="inner__card">
+                <select [(ngModel)]="outputCurrency" (change)="outputChange()">
+                    <option *ngFor="let item of currencyList" [value]="item.value">{{item.name}}</option>
+                </select>
+                <input type="number" [(ngModel)]="outputValue" (input)="countInput()">
+            </div>
         </div>
     </div>
 </div>

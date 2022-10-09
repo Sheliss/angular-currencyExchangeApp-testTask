@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { DropdownItem, Currencies } from 'src/app/Interfaces';
+import { ExchangeRateService } from 'src/app/services/exchange-rate.service';
 
 @Component({
   selector: 'app-converter',
@@ -7,24 +9,99 @@ import { Component, OnInit } from '@angular/core';
 })
 export class ConverterComponent implements OnInit {
 
-currencyList: object[] = [
-    {
-      value: 'usd',
-      name: 'USD - US Dollar'
-    },
-    {
-      value: 'eur',
-      name: 'EUR - Euro'
-    },
-    {
-      value: 'uah',
-      name: 'UAH - Ukrainian Hryvnia'
-    }
-  ];
+currencyList: DropdownItem[] = [
+  {
+    value: 'uah',
+    name: 'UAH - Ukrainian Hryvnia'
+  },
+   {
+    value: 'usd',
+    name: 'USD - US Dollar'
+  },
+  {
+    value: 'eur',
+    name: 'EUR - Euro'
+  }
+];
 
-  constructor() { }
+  inputCurrency: string = this.currencyList[0].value;
+  outputCurrency: string = this.currencyList[this.currencyList.length - 1].value;
+
+
+  lastInput: string = 'none';
+  lastOutput: string = 'none';
+
+  inputValue: number = 1;
+  outputValue: number = 0;
+
+  currentRate: number = 0;
+
+  constructor(private exchangeRate: ExchangeRateService) { }
 
   ngOnInit(): void {
+    this.lastInput = this.inputCurrency;
+    this.lastOutput = this.outputCurrency;
+
+    this.getCurrentRate(this.inputCurrency, this.outputCurrency);
+    this.exchangeRate.getCurrentRate(this.inputCurrency, this.outputCurrency).subscribe((res: Currencies) => (this.outputValue = this.inputValue * this.responseCurrencyCheck(res)!)); //Non-null Assertion because null can't be as result of this function
+    
   }
+
+  getCurrentRate(input: string, output: string) {
+    this.exchangeRate.getCurrentRate(input, output).subscribe((res: Currencies) => (this.currentRate = this.responseCurrencyCheck(res)!));
+  }
+
+  inputChange() {
+    if(this.inputCurrency === this.outputCurrency) {
+      this.outputCurrency = this.lastInput;
+      this.lastInput = this.inputCurrency;
+      this.lastOutput = this.outputCurrency;
+      this.getCurrentRate(this.inputCurrency, this.outputCurrency);
+      return;
+    }
+
+    this.getCurrentRate(this.inputCurrency, this.outputCurrency);
+    this.lastInput = this.inputCurrency;
+    this.lastOutput = this.outputCurrency;
+  }
+
+  outputChange() {
+    if(this.inputCurrency === this.outputCurrency) {
+      this.inputCurrency = this.lastOutput;
+      this.lastInput = this.inputCurrency;
+      this.lastOutput = this.outputCurrency;
+      this.getCurrentRate(this.inputCurrency, this.outputCurrency);
+      return;
+    }
+
+    this.getCurrentRate(this.inputCurrency, this.outputCurrency);
+    this.lastInput = this.inputCurrency;
+    this.lastOutput = this.outputCurrency;
+  }
+
+  countOutput() {
+    this.getCurrentRate(this.inputCurrency, this.outputCurrency);
+    this.outputValue = this.inputValue * this.currentRate;
+  }
+
+  countInput() {
+    this.getCurrentRate(this.inputCurrency, this.outputCurrency);
+    this.inputValue  = this.outputValue / this.currentRate;
+  }
+
+
+  responseCurrencyCheck(res: Currencies) {
+    if('uah' in res) {
+      return res.uah;
+    }
+    if('usd' in res) { 
+      return res.usd
+    }
+    if('eur' in res) { 
+      return res.eur
+    }
+    return -1
+  }
+
 
 }
