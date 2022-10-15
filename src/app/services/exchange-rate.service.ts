@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http'
 import { Observable } from 'rxjs';
 import { Currencies } from 'src/app/Interfaces';
+import { map } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -11,12 +12,15 @@ export class ExchangeRateService {
 
   constructor(private http: HttpClient) { }
 
-  getCurrentRate(input: string, output: string): Observable<Currencies> {
+  getCurrentRate(input: string, output: string): Observable<number> {
     return this.http
       .get<Currencies>(this.apiUri + '/' + input + '/' + output + '.json')
+      .pipe(map((res) => {
+        return this.responseCurrencyCheck(res)!;
+      }))
   }
 
-  responseCurrencyCheck(res: Currencies) {
+  private responseCurrencyCheck(res: Currencies) {
     if('uah' in res) {
       return res.uah;
     }

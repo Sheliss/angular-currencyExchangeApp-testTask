@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { ExchangeRateService } from 'src/app/services/exchange-rate.service';
-import { Currencies } from 'src/app/Interfaces';
 
 @Component({
   selector: 'app-header',
@@ -8,14 +7,14 @@ import { Currencies } from 'src/app/Interfaces';
   styleUrls: ['./header.component.scss']
 })
 export class HeaderComponent implements OnInit {
-  rateUSD: number = 0;
-  rateEUR: number = 0;
+  rateUSD: number = -1;
+  rateEUR: number = -1;
 
   constructor(private exchangeRate: ExchangeRateService) { }
 
   ngOnInit(): void {
-    this.exchangeRate.getCurrentRate('uah', 'usd').subscribe((res: Currencies) => (this.rateUSD = this.exchangeRate.responseCurrencyCheck(res)!));
-    this.exchangeRate.getCurrentRate('uah', 'eur').subscribe((res: Currencies) => (this.rateEUR = this.exchangeRate.responseCurrencyCheck(res)!));
+    this.exchangeRate.getCurrentRate('uah', 'usd').subscribe((res: number) => this.rateUSD = res);
+    this.exchangeRate.getCurrentRate('uah', 'eur').subscribe((res: number) => this.rateEUR = res);
   }
 
 }

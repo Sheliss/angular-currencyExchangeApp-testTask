@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { DropdownItem, Currencies } from 'src/app/Interfaces';
+import { DropdownItem } from 'src/app/Interfaces';
 import { ExchangeRateService } from 'src/app/services/exchange-rate.service';
 
 @Component({
@@ -64,7 +64,7 @@ currencyList: DropdownItem[] = [
   }
 
   getCurrentRate(input: string, output: string) {
-    this.exchangeRate.getCurrentRate(input, output).subscribe((res: Currencies) => (this.CurrentRate = this.exchangeRate.responseCurrencyCheck(res)!));
+    this.exchangeRate.getCurrentRate(input, output).subscribe((res: number) => this.CurrentRate = res);
   }
 
   //Checking currency change and also swap currencies if the same one is selected as in another select
