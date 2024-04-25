@@ -1,36 +1,23 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http'
 import { Observable } from 'rxjs';
-import { Currencies } from 'src/app/Interfaces';
+import { Rates, Response } from 'src/app/Interfaces';
 import { map } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ExchangeRateService {
-  private apiUri: string = 'https://cdn.jsdelivr.net/gh/fawazahmed0/currency-api@1/latest/currencies';
+  private apiUri: string = 'https://open.er-api.com/v6/latest';
 
   constructor(private http: HttpClient) { }
 
-  getCurrentRate(input: string, output: string): Observable<number> {
-    return this.http
-      .get<Currencies>(this.apiUri + '/' + input + '/' + output + '.json')
-      .pipe(map((res) => {
-        return this.responseCurrencyCheck(res)!;
-      }))
-  }
+  getCurrentRate(input: string): Observable<Response> {
 
-  private responseCurrencyCheck(res: Currencies) {
-    if('uah' in res) {
-      return res.uah;
+    return this.http
+      .get<Response>(this.apiUri + '/' + input)
+      .pipe(map((res) => {
+        return res;
+      })) 
     }
-    if('usd' in res) { 
-      return res.usd
-    }
-    if('eur' in res) { 
-      return res.eur
-    }
-    return -1
-  }
-  
 }

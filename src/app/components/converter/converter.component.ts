@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { DropdownItem } from 'src/app/Interfaces';
+import { Currencies, DropdownItem, Response } from 'src/app/Interfaces';
 import { ExchangeRateService } from 'src/app/services/exchange-rate.service';
 
 @Component({
@@ -18,20 +18,37 @@ export class ConverterComponent implements OnInit {
 
 currencyList: DropdownItem[] = [
   {
-    value: 'uah',
+    value: 'UAH',
     name: 'UAH - Ukrainian Hryvnia'
   },
    {
-    value: 'usd',
+    value: 'USD',
     name: 'USD - US Dollar'
   },
   {
-    value: 'eur',
+    value: 'PLN',
+    name: 'PLN - Polish złoty'
+  },
+  {
+    value: 'CAD',
+    name: 'CAD - Canadian Dollar'
+  },
+  {
+    value: 'AUD',
+    name: 'AUD - Australian Dollar'
+  },
+  {
+    value: 'GBP',
+    name: 'GBP - Pound Sterling'
+  },
+  {
+    value: 'EUR',
     name: 'EUR - Euro'
   }
   ];
 
   ////////////////////////////////
+
 
   inputCurrency: string = this.currencyList[0].value;
   outputCurrency: string = this.currencyList[this.currencyList.length - 1].value;
@@ -43,13 +60,13 @@ currencyList: DropdownItem[] = [
   inputValue: number = 1;
   outputValue: number = 0;
 
-  private _currentRate: number = 0;
+  private _currentRate: Currencies = {};
 
-  get CurrentRate(): number {
+  get CurrentRate(): Currencies {
     return this._currentRate;
   }
 
-  set CurrentRate(value: number) {
+  set CurrentRate(value: Currencies) {
     this._currentRate = value;
     this.countOutput();
   }
@@ -60,11 +77,11 @@ currencyList: DropdownItem[] = [
     this.lastInput = this.inputCurrency;
     this.lastOutput = this.outputCurrency;
 
-    this.getCurrentRate(this.inputCurrency, this.outputCurrency);
+    this.getCurrentRate(this.inputCurrency);
   }
 
-  getCurrentRate(input: string, output: string) {
-    this.exchangeRate.getCurrentRate(input, output).subscribe((res: number) => this.CurrentRate = res);
+  getCurrentRate(input: string) {
+    this.exchangeRate.getCurrentRate(input).subscribe((res: Response) => this.CurrentRate = res.rates);
   }
 
   //Checking currency change and also swap currencies if the same one is selected as in another select
@@ -74,10 +91,10 @@ currencyList: DropdownItem[] = [
       this.outputCurrency = this.lastInput;
       this.lastInput = this.inputCurrency;
       this.lastOutput = this.outputCurrency;
-      this.getCurrentRate(this.inputCurrency, this.outputCurrency);
+      this.getCurrentRate(this.inputCurrency);
       return;
     }
-    this.getCurrentRate(this.inputCurrency, this.outputCurrency);
+    this.getCurrentRate(this.inputCurrency);
     this.lastInput = this.inputCurrency;
     this.lastOutput = this.outputCurrency;
   }
@@ -87,10 +104,10 @@ currencyList: DropdownItem[] = [
       this.inputCurrency = this.lastOutput;
       this.lastInput = this.inputCurrency;
       this.lastOutput = this.outputCurrency;
-      this.getCurrentRate(this.inputCurrency, this.outputCurrency);
+      this.getCurrentRate(this.inputCurrency);
       return;
     }
-    this.getCurrentRate(this.inputCurrency, this.outputCurrency);
+    this.countOutput();
     this.lastInput = this.inputCurrency;
     this.lastOutput = this.outputCurrency;
   }
@@ -102,7 +119,7 @@ currencyList: DropdownItem[] = [
       this.inputValue *= -1;
     }
 
-    this.outputValue = Number((this.inputValue * this.CurrentRate).toFixed(2));
+    this.outputValue = Number((this.inputValue * this.CurrentRate[this.outputCurrency]).toFixed(2));
   }
 
   countInput() {
@@ -110,7 +127,7 @@ currencyList: DropdownItem[] = [
       this.outputValue *= -1;
     }
 
-    this.inputValue = Number((this.outputValue / this.CurrentRate).toFixed(2));
+    this.inputValue = Number((this.outputValue / this.CurrentRate[this.outputCurrency]).toFixed(2));
   }
 
   //Exchange currencies and values at the button click
@@ -120,7 +137,7 @@ currencyList: DropdownItem[] = [
     this.inputCurrency = this.outputCurrency;
     this.outputCurrency = this.lastInput;
 
-    this.getCurrentRate(this.inputCurrency, this.outputCurrency);
+    this.getCurrentRate(this.inputCurrency);
 
     this.lastInput = this.inputCurrency;
     this.lastOutput = this.outputCurrency;
