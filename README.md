@@ -4,4 +4,4 @@ Exchange Currency App
 
 Live [here](https://spontaneous-gumdrop-214177.netlify.app/)
 
-Powered by [Exchangeratesapi.io](https://exchangeratesapi.io/)
+Powered by [ExchangeRate-api.com](https://www.exchangerate-api.com/)
